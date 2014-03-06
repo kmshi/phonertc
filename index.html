@@ -31,37 +31,174 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+        <h2>
+<a name="phonertc" class="anchor" href="#phonertc"><span class="octicon octicon-link"></span></a>PhoneRTC</h2>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>PhoneRTC is an open-source standalone video/voice chat solution for PhoneGap based on WebRTC.</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<h3>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h3>
+
+<ul>
+<li>Completely open source.</li>
+<li>Android and iOS support.</li>
+<li>Simple JavaScript API.</li>
+<li>Voice chat.</li>
+<li>Use your own servers without relying on any third-parties.</li>
+<li>Perfect for hybrid mobile apps using Angular.</li>
+</ul><h3>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h3>
+
+<ul>
+<li>TURN server - <a href="https://code.google.com/p/rfc5766-turn-server/">rfc5766-turn-server</a> on Amazon EC2 is a good option here</li>
+<li>Signaling server - <a href="http://signalr.net/">SignalR</a> if you are using ASP.NET or <a href="http://socket.io/">socket.io</a> if you are using Node.js are recommended</li>
+</ul><h3>
+<a name="upcoming-features" class="anchor" href="#upcoming-features"><span class="octicon octicon-link"></span></a>Upcoming features</h3>
+
+<ul>
+<li>Video chat (really soon)</li>
+<li>Group chat</li>
+<li>PhoneGap Build support</li>
+<li>API documentation</li>
+<li>Volume control</li>
+</ul><h3>
+<a name="how-does-phonertc-differ-from-opentok-weemo-etc" class="anchor" href="#how-does-phonertc-differ-from-opentok-weemo-etc"><span class="octicon octicon-link"></span></a>How does PhoneRTC differ from OpenTok, Weemo, etc?</h3>
+
+<p>WebRTC is a peer-to-peer protocol, but it still needs some servers: a signaling server for initializing the call and a proxy server if the peer-to-peer connection fails.</p>
+
+<p>Other solutions, such as OpenTok and Weemo, require you to use their own third-party servers. That means they are much easier to use, but that also means that they are less open, have a subscription model, and you are generally less in control.</p>
+
+<p>PhoneRTC allows you to use your own servers, without relying on any third-parties.</p>
+
+<h3>
+<a name="setting-up-a-turn-server" class="anchor" href="#setting-up-a-turn-server"><span class="octicon octicon-link"></span></a>Setting up a TURN server</h3>
+
+<p>To set up a TURN server, create an Amazon EC2 instance with the latest Ubuntu. Open the following ports in the instance security group:</p>
+
+<pre><code>TCP 443
+TCP 3478-3479
+TCP 32355-65535
+UDP 3478-3479
+UDP 32355-65535
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<p>Open SSH and run:</p>
+
+<pre><code>sudo apt-get install rfc5766-turn-server
+</code></pre>
+
+<p>Next, edit <code>/etc/turnserver.conf</code> and change the following options:</p>
+
+<pre><code>listening-ip=&lt;private EC2 ip address&gt;
+relay-ip=&lt;private EC2 ip address&gt;
+external-ip=&lt;public EC2 ip address&gt;
+min-port=32355 
+max-port=65535
+realm=&lt;your domain&gt;
+</code></pre>
+
+<p>Also uncomment the following options:</p>
+
+<pre><code>lt-cred-mech
+fingerprint 
+</code></pre>
+
+<p>Next, open <code>/etc/turnuserdb.conf</code> and add a new user at the end of the file. The format is: </p>
+
+<pre><code>username:password
+</code></pre>
+
+<p>To start the TURN server, run the following command:</p>
+
+<pre><code>sudo /etc/init.d/rfc5766-turn-server start
+</code></pre>
 
 <h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<a name="plugin-installation" class="anchor" href="#plugin-installation"><span class="octicon octicon-link"></span></a>Plugin Installation</h3>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<p>Install Cordova:</p>
+
+<pre><code>npm install -g cordova ios-deploy
+</code></pre>
+
+<p>Create a new Cordova project:</p>
+
+<pre><code>cordova create &lt;name&gt;
+cordova platform add ios android
+</code></pre>
+
+<p>Add the plugin:</p>
+
+<pre><code>cordova plugin add https://github.com/alongubkin/phonertc.git
+</code></pre>
 
 <h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<a name="usage-example" class="anchor" href="#usage-example"><span class="octicon octicon-link"></span></a>Usage Example</h3>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<div class="highlight highlight-javascript"><pre><span class="nx">phonertc</span><span class="p">.</span><span class="nx">call</span><span class="p">({</span> 
+    <span class="nx">isInitator</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="c1">// Caller or callee?</span>
+    <span class="nx">turn</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">host</span><span class="o">:</span> <span class="s1">'turn:turn.example.com:3478'</span><span class="p">,</span>
+        <span class="nx">username</span><span class="o">:</span> <span class="s1">'user'</span><span class="p">,</span>
+        <span class="nx">password</span><span class="o">:</span> <span class="s1">'pass'</span>
+    <span class="p">},</span>
+    <span class="nx">sendMessageCallback</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// PhoneRTC wants to send a message to your target, use</span>
+        <span class="c1">// your signaling server here to send the message.</span>
+        <span class="nx">signaling</span><span class="p">.</span><span class="nx">sendMessage</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="p">{</span> 
+            <span class="nx">type</span><span class="o">:</span> <span class="s1">'webrtc_handshake'</span><span class="p">,</span>
+            <span class="nx">data</span><span class="o">:</span> <span class="nx">data</span>
+        <span class="p">});</span>
+    <span class="p">},</span>
+    <span class="nx">answerCallback</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">alert</span><span class="p">(</span><span class="s1">'Callee answered!'</span><span class="p">);</span>
+    <span class="p">},</span>
+    <span class="nx">disconnectCallback</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">alert</span><span class="p">(</span><span class="s1">'Call disconnected!'</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">signaling</span><span class="p">.</span><span class="nx">onMessage</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">'webrtc_handshake'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// when a message is received from the signaling server, </span>
+        <span class="c1">// notify the PhoneRTC plugin.</span>
+        <span class="nx">phonertc</span><span class="p">.</span><span class="nx">receiveMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
 
 <h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<a name="building" class="anchor" href="#building"><span class="octicon octicon-link"></span></a>Building</h3>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>Building for Android is easy. You can just:</p>
+
+<pre><code>cordova build android
+cordova run android
+</code></pre>
+
+<p>In iOS, it's slightly more complicated. Run:</p>
+
+<pre><code>cordova build ios
+</code></pre>
+
+<p>This command will result in an error. Open the project in Xcode and change the following options in the project settings:</p>
+
+<pre><code>Valid Architectures =&gt; armv7
+Build Active Architecture Only =&gt; No
+</code></pre>
+
+<p>In the target choose a real iOS device, not the simulator, otherwise it won't build.</p>
+
+<p>To create an IPA, go to Product &gt; Archive.</p>
 
 <h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<a name="note-on-native-libraries" class="anchor" href="#note-on-native-libraries"><span class="octicon octicon-link"></span></a>Note on native libraries</h3>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<p>The <code>libs</code> directory contains compiled libraries from the <a href="https://code.google.com/p/webrtc/">official WebRTC project</a>. If you want to build them yourself, use the following tutorials:</p>
+
+<p>Android: <a href="https://code.google.com/p/webrtc/source/browse/trunk/talk/examples/android/README">https://code.google.com/p/webrtc/source/browse/trunk/talk/examples/android/README</a></p>
+
+<p>iOS: <a href="https://code.google.com/p/webrtc/source/browse/trunk/talk/app/webrtc/objc/README">https://code.google.com/p/webrtc/source/browse/trunk/talk/app/webrtc/objc/README</a></p>
       </section>
     </div>
 
