@@ -4,7 +4,7 @@
   <head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="PhoneRTC : WebRTC for PhoneGap apps" />
+    <meta name="description" content="PhoneRTC : WebRTC for Cordova apps" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
@@ -19,7 +19,7 @@
           <a id="forkme_banner" href="https://github.com/alongubkin/phonertc">View on GitHub</a>
 
           <h1 id="project_title">PhoneRTC</h1>
-          <h2 id="project_tagline">WebRTC for PhoneGap apps</h2>
+          <h2 id="project_tagline">WebRTC for Cordova apps</h2>
 
             <section id="downloads">
               <a class="zip_download_link" href="https://github.com/alongubkin/phonertc/zipball/master">Download this project as a .zip file</a>
@@ -34,18 +34,20 @@
         <h2>
 <a name="phonertc" class="anchor" href="#phonertc"><span class="octicon octicon-link"></span></a>PhoneRTC</h2>
 
-<p>WebRTC for PhoneGap apps!</p>
+<p>WebRTC for Cordova apps!</p>
+
+<p><strong>Note:</strong> PhoneRTC is still at very early stages. Right now, it's more like a proof-of-concept than a production-ready library. </p>
 
 <h3>
 <a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h3>
 
 <ul>
-<li>Completely open source.</li>
-<li>Android and iOS support.</li>
-<li>Simple JavaScript API.</li>
-<li>Voice chat.</li>
-<li>Use your own servers without relying on any third-parties.</li>
-<li>Perfect for hybrid mobile apps using Angular.</li>
+<li>Completely open source</li>
+<li>Android and iOS support</li>
+<li>Simple JavaScript API</li>
+<li>Video &amp; Voice chat</li>
+<li>Use your own servers without relying on any third-parties</li>
+<li>Perfect for hybrid mobile apps using Angular</li>
 </ul><h3>
 <a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h3>
 
@@ -56,9 +58,7 @@
 <a name="upcoming-features" class="anchor" href="#upcoming-features"><span class="octicon octicon-link"></span></a>Upcoming features</h3>
 
 <ul>
-<li>Video chat (really soon)</li>
 <li>Group chat</li>
-<li>PhoneGap Build support</li>
 <li>API documentation</li>
 <li>Volume control</li>
 </ul><h3>
@@ -135,7 +135,9 @@ cordova platform add ios android
 <h3>
 <a name="usage-example" class="anchor" href="#usage-example"><span class="octicon octicon-link"></span></a>Usage Example</h3>
 
-<div class="highlight highlight-javascript"><pre><span class="nx">phonertc</span><span class="p">.</span><span class="nx">call</span><span class="p">({</span> 
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">phonertc</span> <span class="o">=</span> <span class="nx">cordova</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s1">'com.dooble.phonertc.PhoneRTC'</span><span class="p">);</span>
+
+<span class="nx">phonertc</span><span class="p">.</span><span class="nx">call</span><span class="p">({</span> 
     <span class="nx">isInitator</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="c1">// Caller or callee?</span>
     <span class="nx">turn</span><span class="o">:</span> <span class="p">{</span>
         <span class="nx">host</span><span class="o">:</span> <span class="s1">'turn:turn.example.com:3478'</span><span class="p">,</span>
@@ -155,6 +157,10 @@ cordova platform add ios android
     <span class="p">},</span>
     <span class="nx">disconnectCallback</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
         <span class="nx">alert</span><span class="p">(</span><span class="s1">'Call disconnected!'</span><span class="p">);</span>
+    <span class="p">},</span>
+    <span class="nx">video</span><span class="o">:</span> <span class="p">{</span>  <span class="c1">// Remove this property if you don't want video chat</span>
+        <span class="nx">localVideo</span><span class="o">:</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'localVideo'</span><span class="p">),</span>
+        <span class="nx">remoteVideo</span><span class="o">:</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'remoteVideo'</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">});</span>
 
@@ -176,18 +182,18 @@ cordova platform add ios android
 cordova run android
 </code></pre>
 
-<p>In iOS, it's slightly more complicated. Run:</p>
+<p>In iOS, it's slightly more complicated. Run the following code. It will prepare all of the web code to be deployed to your device. It must be re-run every time you change any web code:</p>
 
-<pre><code>cordova build ios
+<pre><code>cordova prepare ios
 </code></pre>
 
-<p>This command will result in an error. Open the project in Xcode and change the following options in the project settings:</p>
+<p>Open the project in Xcode and change the following options in the project settings (these must be changed for both your project and the CordovaLib project):</p>
 
 <pre><code>Valid Architectures =&gt; armv7
 Build Active Architecture Only =&gt; No
 </code></pre>
 
-<p>In the target choose a real iOS device, not the simulator, otherwise it won't build.</p>
+<p>In the target choose a real iOS device, not the simulator, otherwise it won't build. You should now be able to run this on your device.</p>
 
 <p>To create an IPA, go to Product &gt; Archive.</p>
 
@@ -199,6 +205,11 @@ Build Active Architecture Only =&gt; No
 <p>Android: <a href="https://code.google.com/p/webrtc/source/browse/trunk/talk/examples/android/README">https://code.google.com/p/webrtc/source/browse/trunk/talk/examples/android/README</a></p>
 
 <p>iOS: <a href="https://code.google.com/p/webrtc/source/browse/trunk/talk/app/webrtc/objc/README">https://code.google.com/p/webrtc/source/browse/trunk/talk/app/webrtc/objc/README</a></p>
+
+<h3>
+<a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h3>
+
+<p>iOS Video Support: <a href="https://github.com/egreenmachine">@egreenmachine</a> (BitCoin Donations: <code>12pDZFVov6rDPjhGTz9Xj4qqegdoCJF3Ea</code>)</p>
       </section>
     </div>
 
